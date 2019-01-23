@@ -1365,6 +1365,32 @@ get_size_hints(Display *dpy, win *w)
 }
 
 static void
+focus_game (Display *dpy, Window id) {
+	win *w = find_win (dpy, id);
+
+	if (!w)
+		return;
+
+	char *name = NULL;
+	if (XFetchName (dpy, id, &name) > 0) {
+		if (strcmp (name, "steam") == 0 || strcmp (name, "Steam") == 0 || strcmp (name, "SteamOverlay") == 0)
+			w = NULL;
+
+		XFree(name);
+	}
+
+	if (!w)
+		return;
+
+	XWindowAttributes attrib;
+	XGetWindowAttributes (dpy, id, &attrib);
+	if (attrib.width > 64 && attrib.height > 64) {
+		w->gameID = 1;
+		printf ("force focused window id: 0x%x\n", id);
+	}
+}
+
+static void
 map_win (Display *dpy, Window id, unsigned long sequence)
 {
 	win		*w = find_win (dpy, id);
@@ -1385,6 +1411,9 @@ map_win (Display *dpy, Window id, unsigned long sequence)
 	w->gameID = get_prop (dpy, w->id, gameAtom, 0);
 	w->isOverlay = get_prop (dpy, w->id, overlayAtom, 0);
 	
+	if (!w->gameID && !w->isSteam && !w->isOverlay)
+		focus_game (dpy, id);
+
 	get_size_hints(dpy, w);
 	
 	w->damaged = 0;
