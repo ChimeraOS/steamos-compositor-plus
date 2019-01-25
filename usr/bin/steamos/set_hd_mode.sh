@@ -27,7 +27,7 @@ function first_by_prefix_order() {
     done
 }
 
-GOODMODES=("1920x1080" "1280x720")
+GOODMODES=("3840x2160" "1920x1080" "1280x720")
 GOODRATES=("60.0" "59.9") # CEA modes guarantee or one the other, but not both?
 
 # First, some logging

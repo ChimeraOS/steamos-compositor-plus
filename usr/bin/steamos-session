@@ -22,4 +22,4 @@ loadargb_cursor /usr/share/icons/steam/arrow.png
 # Workaround for Steam login issue while Steam client change propagates out of Beta
 touch ~/.steam/root/config/SteamAppData.vdf || true
 
-steam -tenfoot -steamos -enableremotecontrol
+steam -tenfoot -steamos -enableremotecontrol -fulldesktopres
