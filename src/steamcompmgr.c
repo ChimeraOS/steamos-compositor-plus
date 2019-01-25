@@ -1365,18 +1365,20 @@ get_size_hints(Display *dpy, win *w)
 }
 
 static void
-focus_game (Display *dpy, Window id) {
+focus_game (Display *dpy, Window id)
+{
 	win *w = find_win (dpy, id);
 
 	if (!w)
 		return;
 
 	char *name = NULL;
-	if (XFetchName (dpy, id, &name) > 0) {
+	if (XFetchName (dpy, id, &name) > 0)
+	{
 		if (strcmp (name, "steam") == 0 || strcmp (name, "Steam") == 0 || strcmp (name, "SteamOverlay") == 0)
 			w = NULL;
 
-		XFree(name);
+		XFree (name);
 	}
 
 	if (!w)
@@ -1384,7 +1386,8 @@ focus_game (Display *dpy, Window id) {
 
 	XWindowAttributes attrib;
 	XGetWindowAttributes (dpy, id, &attrib);
-	if (attrib.width > 64 && attrib.height > 64) {
+	if (attrib.width > 64 && attrib.height > 64)
+	{
 		w->gameID = 1;
 		printf ("force focused window id: 0x%x\n", id);
 	}
