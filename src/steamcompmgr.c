@@ -1387,7 +1387,7 @@ focus_game (Display *dpy, Window id)
 
 	XWindowAttributes attrib;
 	XGetWindowAttributes (dpy, id, &attrib);
-	if (attrib.width > 64 && attrib.height > 64)
+	if (attrib.width > 128 && attrib.height > 128)
 	{
 		w->gameID = 1;
 		printf ("force focused window id: 0x%x\n", id);
