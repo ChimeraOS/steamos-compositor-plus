@@ -1366,31 +1366,25 @@ get_size_hints(Display *dpy, win *w)
 }
 
 static void
-focus_game (Display *dpy, Window id)
+focus_game (Display *dpy, win *w)
 {
-	win *w = find_win (dpy, id);
-
-	if (!w)
-		return;
-
 	char *name = NULL;
-	if (XFetchName (dpy, id, &name) > 0)
+	Bool skip = False;
+	if (XFetchName (dpy, w->id, &name) > 0)
 	{
-		if (strcmp (name, "steam") == 0 || strcmp (name, "Steam") == 0 || strcmp (name, "SteamOverlay") == 0)
-			w = NULL;
-
+		skip = (strcmp (name, "steam") == 0 || strcmp (name, "Steam") == 0 || strcmp (name, "SteamOverlay") == 0);
 		XFree (name);
 	}
 
-	if (!w)
+	if (skip)
 		return;
 
 	XWindowAttributes attrib;
-	XGetWindowAttributes (dpy, id, &attrib);
+	XGetWindowAttributes (dpy, w->id, &attrib);
 	if (attrib.width > 128 && attrib.height > 128)
 	{
 		w->gameID = 1;
-		printf ("force focused window id: 0x%x\n", id);
+		printf ("force focused window id: 0x%x\n", w->id);
 	}
 }
 
@@ -1416,7 +1410,7 @@ map_win (Display *dpy, Window id, unsigned long sequence)
 	w->isOverlay = get_prop (dpy, w->id, overlayAtom, 0);
 	
 	if (enableFocusHack && !w->gameID && !w->isSteam && !w->isOverlay)
-		focus_game (dpy, id);
+		focus_game (dpy, w);
 
 	get_size_hints(dpy, w);
 	
