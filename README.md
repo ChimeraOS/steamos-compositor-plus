@@ -14,4 +14,4 @@ Available as `steamos-compositor-plus` in the AUR.
 Coming soon.
 
 ### Usage
-Use the `-b` option to disable the game focus hack. This can be useful for testing.
+To disable the game focus hack, add the `-b` option to the `steamcompmgr` command in `/usr/bin/steamos-session`. This can be useful for testing and confirming an affected game.
