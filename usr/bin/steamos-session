@@ -15,6 +15,14 @@ export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libmodeswitch_inhibitor.so:/usr/lib/
 xset -dpms
 xset s off
 
+if command -v start-pulseaudio-x11 > /dev/null; then
+	start-pulseaudio-x11 &
+fi
+
+if command -v bluetoothctl > /dev/null; then
+	bluetoothctl power on
+fi
+
 steamcompmgr &
 
 loadargb_cursor /usr/share/icons/steam/arrow.png
