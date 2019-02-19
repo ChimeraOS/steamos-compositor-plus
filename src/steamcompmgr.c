@@ -262,6 +262,8 @@ static Bool		drawDebugInfo = False;
 static Bool		debugEvents = False;
 static Bool		allowUnredirection = False;
 static Bool		enableFocusHack = True;
+static Bool		enableProtonHack = True;
+static Bool		enableHackLogging = False;
 
 const int tfpAttribs[] = {
 	GLX_TEXTURE_TARGET_EXT, GLX_TEXTURE_2D_EXT,
@@ -1365,27 +1367,48 @@ get_size_hints(Display *dpy, win *w)
 	}
 }
 
-static void
-focus_game (Display *dpy, win *w)
+static unsigned long long int
+get_gameID (Display *dpy, win *w)
 {
-	char *name = NULL;
-	Bool skip = False;
-	if (XFetchName (dpy, w->id, &name) > 0)
-	{
-		skip = (strcmp (name, "steam") == 0 || strcmp (name, "Steam") == 0 || strcmp (name, "SteamOverlay") == 0);
-		XFree (name);
-	}
+	unsigned long long int oldGameID = get_prop (dpy, w->id, gameAtom, 0);
+	unsigned long long int newGameID = oldGameID;
 
-	if (skip)
-		return;
-
+	XClassHint hint;
 	XWindowAttributes attrib;
-	XGetWindowAttributes (dpy, w->id, &attrib);
-	if (attrib.width > 128 && attrib.height > 128)
+
+	if (w->isSteam || w->isOverlay)
+		return oldGameID;
+
+	if (enableFocusHack && oldGameID == 0)
+		newGameID = 1;
+
+	if (enableHackLogging)
+		printf ("window id: '0x%x', ", w->id);
+
+	if (XGetClassHint (dpy, w->id, &hint) > 0)
 	{
-		w->gameID = 1;
-		printf ("force focused window id: 0x%x\n", w->id);
+		if (strcmp (hint.res_name, "steam") == 0 || strcmp (hint.res_name, "Steam") == 0)
+			newGameID = oldGameID;
+
+		if (enableHackLogging)
+			printf ("res_name: '%s', ", hint.res_name);
+
+		XFree (hint.res_name);
+		XFree (hint.res_class);
 	}
+
+	XGetWindowAttributes (dpy, w->id, &attrib);
+	if (enableProtonHack && attrib.width == 1 && attrib.height == 1)
+		newGameID = 0;
+
+	if (enableHackLogging)
+	{
+		printf ("width: '%d', ", attrib.width);
+		printf ("height: '%d', ", attrib.height);
+		printf ("gameID: %llu->%llu\n", oldGameID, newGameID);
+	}
+
+	return newGameID;
 }
 
 static void
@@ -1406,11 +1429,8 @@ map_win (Display *dpy, Window id, unsigned long sequence)
 	w->opacity = get_prop (dpy, w->id, opacityAtom, TRANSLUCENT);
 	
 	w->isSteam = get_prop (dpy, w->id, steamAtom, 0);
-	w->gameID = get_prop (dpy, w->id, gameAtom, 0);
 	w->isOverlay = get_prop (dpy, w->id, overlayAtom, 0);
-	
-	if (enableFocusHack && !w->gameID && !w->isSteam && !w->isOverlay)
-		focus_game (dpy, w);
+	w->gameID = get_gameID (dpy, w);
 
 	get_size_hints(dpy, w);
 	
@@ -1756,6 +1776,8 @@ usage (char *program)
 	fprintf (stderr, "   -s\n      Draw server-side shadows with sharp edges.\n");
 	fprintf (stderr, "   -S\n      Enable synchronous operation (for debugging).\n");
 	fprintf (stderr, "   -b\n      Disable game focus hack\n");
+	fprintf (stderr, "   -p\n      Disable proton/wine color flash suppression hack\n");
+	fprintf (stderr, "   -g\n      Enable debug logging for game focus and proton hacks\n");
 	exit (1);
 }
 
@@ -1845,7 +1867,7 @@ main (int argc, char **argv)
 	char	    *display = NULL;
 	int		    o;
 	
-	while ((o = getopt (argc, argv, "D:I:O:d:r:o:l:t:scnufFCaSvVb")) != -1)
+	while ((o = getopt (argc, argv, "D:I:O:d:r:o:l:t:scnufFCaSvVbpg")) != -1)
 	{
 		switch (o) {
 			case 'd':
@@ -1868,6 +1890,12 @@ main (int argc, char **argv)
 				break;
 			case 'b':
 				enableFocusHack = False;
+				break;
+			case 'p':
+				enableProtonHack = False;
+				break;
+			case 'g':
+				enableHackLogging = True;
 				break;
 			default:
 				usage (argv[0]);

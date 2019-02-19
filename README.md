@@ -14,4 +14,9 @@ Available as `steamos-compositor-plus` in the AUR.
 Coming soon.
 
 ### Usage
-To disable the game focus hack, add the `-b` option to the `steamcompmgr` command in `/usr/bin/steamos-session`. This can be useful for testing and confirming an affected game.
+Add any options to the `steamcompmgr` command in `/usr/bin/steamos-session`.
+
+The following additional options are available:
+	-b    Disable game focus hack
+	-p    Disable proton/wine color flash suppression hack
+	-g    Enable debug logging for game focus and proton hacks
