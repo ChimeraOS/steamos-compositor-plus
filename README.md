@@ -1,6 +1,6 @@
 ### What is this?
 This is a fork of the SteamOS compositor, currently based on version 1.35.
-It includes out of the box 4k (3840x2160) support and adds a fix for games that start in the background, including Dead Cells, The Count Lucanor, most Feral games and probably others.
+It includes out of the box 4k (3840x2160) support, hides the annoying color flashing on startup of Proton games and adds a fix for games that start in the background, including Dead Cells, The Count Lucanor, most Feral games and probably others.
 
 ### Build
 Clone the repository and run
