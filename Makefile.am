@@ -16,4 +16,4 @@ loadargb_cursor_LDADD = $(DEPS_LIBS)
 udev_is_boot_vga_CFLAGS = $(DEPS_CFLAGS)
 udev_is_boot_vga_LDADD = $(DEPS_LIBS)
 
-dist_doc_DATA = README
+dist_doc_DATA = README.md
