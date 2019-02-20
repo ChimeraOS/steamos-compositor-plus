@@ -17,6 +17,7 @@ Coming soon.
 Add any options to the `steamcompmgr` command in `/usr/bin/steamos-session`.
 
 The following additional options are available:
+
 	-b    Disable game focus hack
 	-p    Disable proton/wine color flash suppression hack
 	-g    Enable debug logging for game focus and proton hacks
