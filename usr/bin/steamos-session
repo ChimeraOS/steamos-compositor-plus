@@ -19,7 +19,7 @@ if command -v start-pulseaudio-x11 > /dev/null; then
 	start-pulseaudio-x11 &
 fi
 
-if command -v bluetoothctl > /dev/null; then
+if systemctl is-active --quiet bluetooth && command -v bluetoothctl > /dev/null; then
 	bluetoothctl power on
 fi
 
