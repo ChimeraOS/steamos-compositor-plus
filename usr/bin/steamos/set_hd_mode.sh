@@ -30,6 +30,14 @@ function first_by_prefix_order() {
 GOODMODES=("3840x2160" "1920x1080" "1280x720")
 GOODRATES=("60.0" "59.9") # CEA modes guarantee or one the other, but not both?
 
+# Override the defaults from the user config
+if [ -f "$HOME/.steamosrc" ]; then
+    source "$HOME/.steamosrc"
+else
+    echo '#GOODMODES=("3840x2160" "1920x1080" "1280x720")' > "$HOME/.steamosrc"
+    echo '#GOODRATES=("60.0" "59.9")' >> "$HOME/.steamosrc"
+fi
+
 # First, some logging
 date
 xrandr --verbose
