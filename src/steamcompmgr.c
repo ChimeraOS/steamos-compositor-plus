@@ -1432,6 +1432,21 @@ map_win (Display *dpy, Window id, unsigned long sequence)
 	w->isOverlay = get_prop (dpy, w->id, overlayAtom, 0);
 	w->gameID = get_gameID (dpy, w);
 
+	// only allow focus of the newest game window
+	win *cw = find_win(dpy, currentFocusWindow);
+	if (cw) {
+		fprintf (stderr, "focused id: '0x%x', ", cw->id);
+		fprintf (stderr, "new id: '0x%x', ", w->id);
+		fprintf (stderr, "focused gameID: '%llu', ", cw->gameID);
+		fprintf (stderr, "new gameID: '%llu', ", w->gameID);
+		if (cw->gameID == w->gameID && cw->id != w->id) {
+			fprintf (stderr, "reset focus: yes\n");
+			cw->gameID = 0;
+		} else {
+			fprintf (stderr, "reset focus: no\n");
+		}
+	}
+
 	get_size_hints(dpy, w);
 	
 	w->damaged = 0;
