@@ -1415,6 +1415,8 @@ static void
 map_win (Display *dpy, Window id, unsigned long sequence)
 {
 	win		*w = find_win (dpy, id);
+	XWindowAttributes cw_attrib;
+	XWindowAttributes w_attrib;
 	
 	if (!w)
 		return;
@@ -1435,15 +1437,27 @@ map_win (Display *dpy, Window id, unsigned long sequence)
 	// only allow focus of the newest game window
 	win *cw = find_win(dpy, currentFocusWindow);
 	if (cw) {
+		XGetWindowAttributes (dpy, cw->id, &cw_attrib);
+		XGetWindowAttributes (dpy, w->id, &w_attrib);
+
 		fprintf (stderr, "focused id: '0x%x', ", cw->id);
 		fprintf (stderr, "new id: '0x%x', ", w->id);
 		fprintf (stderr, "focused gameID: '%llu', ", cw->gameID);
 		fprintf (stderr, "new gameID: '%llu', ", w->gameID);
+		fprintf (stderr, "focused width: '%d', ", cw_attrib.width);
+		fprintf (stderr, "new width: '%d', ", w_attrib.width);
+		fprintf (stderr, "focused height: '%d', ", cw_attrib.height);
+		fprintf (stderr, "new height: '%d', ", w_attrib.height);
 		if (cw->gameID == w->gameID && cw->id != w->id) {
-			fprintf (stderr, "reset focus: yes\n");
-			cw->gameID = 0;
+			if (w_attrib.width >= cw_attrib.width) {
+				fprintf (stderr, "unfocus: current\n");
+				cw->gameID = 0;
+			} else {
+				fprintf (stderr, "unfocus: new\n");
+				w->gameID = 0;
+			}
 		} else {
-			fprintf (stderr, "reset focus: no\n");
+			fprintf (stderr, "unfocus: none\n");
 		}
 	}
 
