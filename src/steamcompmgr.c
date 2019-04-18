@@ -1398,8 +1398,15 @@ get_gameID (Display *dpy, win *w)
 	}
 
 	XGetWindowAttributes (dpy, w->id, &attrib);
-	if (enableProtonHack && attrib.width == 1 && attrib.height == 1)
-		newGameID = 0;
+	if (enableProtonHack)
+	{
+		if (attrib.width == 1 && attrib.height == 1)
+			newGameID = 0;
+
+		// overrides
+		if (oldGameID == 470470 /* Birdsketball */)
+			newGameID = oldGameID;
+	}
 
 	if (enableHackLogging)
 	{
