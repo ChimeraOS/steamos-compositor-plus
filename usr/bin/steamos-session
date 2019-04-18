@@ -30,4 +30,13 @@ loadargb_cursor /usr/share/icons/steam/arrow.png
 # Workaround for Steam login issue while Steam client change propagates out of Beta
 touch ~/.steam/root/config/SteamAppData.vdf || true
 
+# Workaround for missing background when starting steam in big picture mode for the first time
+DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
+IMAGES_DIR="$DATA_HOME/Steam/tenfoot/resource/images"
+BOOTSTRAP_IMAGE="$IMAGES_DIR/bootstrapper.jpg"
+if [ ! -f "$BOOTSTRAP_IMAGE" ]; then
+	mkdir -p "$IMAGES_DIR"
+	cp /usr/share/pixmaps/steam-bootstrapper.jpg "$BOOTSTRAP_IMAGE"
+fi
+
 steam -tenfoot -steamos -enableremotecontrol -fulldesktopres
