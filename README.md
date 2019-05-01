@@ -11,7 +11,12 @@ Clone the repository and run
 Available as `steamos-compositor-plus` in the AUR.
 
 #### SteamOS
-Coming soon.
+1. open a terminal
+2. run: `wget https://raw.githubusercontent.com/alkazar/steamos-compositor/master/steamos-install.sh && sudo sh steamos-install.sh`
+3. restart your system
+
+This will replace `/usr/bin/steamcompmgr` with a modified version. The original file will be moved to `/usr/bin/steamcompmgr.original`.
+If there is a SteamOS update, `/usr/bin/steamcompmgr` may be overwritten and the install script will need to be run again.
 
 ### Usage
 Add any options to the `steamcompmgr` command in `/usr/bin/steamos-session`.
