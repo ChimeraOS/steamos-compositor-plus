@@ -4,7 +4,7 @@ It includes out of the box 4k (3840x2160) support, hides the annoying color flas
 
 ### Installation
 
-#### Arch
+#### Arch Linux
 Available as `steamos-compositor-plus` in the AUR.
 
 #### SteamOS
