@@ -8,7 +8,7 @@ It includes out of the box 4k (3840x2160) support, hides the annoying color flas
 Available as `steamos-compositor-plus` in the AUR.
 
 #### SteamOS
-Run the supplied steamos-install.sh script using the instructions below. This retrieves the latest pre-built binary release of the SteamOS compositor, and copies it across to the right location.
+Run the supplied `steamos-install.sh` script using the instructions below. This retrieves the latest pre-built binary release of the SteamOS compositor, and copies it across to the right location.
 
 1. open a terminal
 2. run: `wget https://raw.githubusercontent.com/alkazar/steamos-compositor/master/steamos-install.sh && sudo sh steamos-install.sh`
