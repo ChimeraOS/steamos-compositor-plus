@@ -2,7 +2,7 @@
 
 set -e
 
-ver=1.1.2
+ver=1.2.0
 
 function xinstall {
 	src=$1
@@ -21,5 +21,9 @@ xinstall \
 xinstall \
 	https://raw.githubusercontent.com/alkazar/steamos-compositor/$ver/usr/bin/steamos/set_hd_mode.sh \
 	/usr/bin/steamos/set_hd_mode.sh
+
+xinstall \
+	https://raw.githubusercontent.com/alkazar/steamos-compositor/$ver/usr/bin/steamos-session \
+	/usr/bin/steamos-session
 
 echo "Installation complete. Please restart the system for changes to take effect."

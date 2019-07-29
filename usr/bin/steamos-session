@@ -39,4 +39,13 @@ if [ ! -f "$BOOTSTRAP_IMAGE" ]; then
 	cp /usr/share/pixmaps/steam-bootstrapper.jpg "$BOOTSTRAP_IMAGE"
 fi
 
-steam -tenfoot -steamos -enableremotecontrol -fulldesktopres
+CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
+CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
+
+STEAMCMD="steam -tenfoot -steamos -enableremotecontrol -fulldesktopres"
+
+if [ -f "$CONFIG_FILE" ]; then
+	source "$CONFIG_FILE"
+fi
+
+$STEAMCMD

@@ -25,6 +25,11 @@ Should you wish to build from source instead of using the pre-built binaries, cl
 Upon first run, a configuration file will be created at `~/.config/steamos-compositor-plus`.
 You can modify this file to manually adjust the resolution and refresh rate.
 
+The variables that can be defined in the configuration file are:
+GOODMODES - an array of resolutions for the compositor to select from
+GOODRATES - an array of refresh rates for the compositor to select from
+STEAMCMD  - a string defining the full command line to be executed to start Steam (see /usr/bin/steamos-session for the default command)
+
 ### Usage
 Add any options to the `steamcompmgr` command in `/usr/bin/steamos-session`.
 
