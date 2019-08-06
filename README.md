@@ -11,7 +11,7 @@ Available as `steamos-compositor-plus` in the AUR.
 Run the supplied `steamos-install.sh` script using the instructions below. This retrieves the latest pre-built binary release of the SteamOS compositor, and copies it across to the right location.
 
 1. open a terminal
-2. run: `wget https://raw.githubusercontent.com/alkazar/steamos-compositor/master/steamos-install.sh && sudo sh steamos-install.sh`
+2. run: `wget https://raw.githubusercontent.com/alkazar/steamos-compositor/master/steamos-install.sh && sudo bash steamos-install.sh`
 3. restart your system
 
 This will replace `/usr/bin/steamcompmgr`, `/usr/bin/steamos/set_hd_mode.sh` and `/usr/bin/steamos-session` with modified versions. The original files will be appended with `.original`.
