@@ -1,9 +1,17 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Contact: steamos@steampowered.com
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: steamos-compositor-plus
+Source: https://github.com/gamer-os/steamos-compositor-plus
 
 Files: *
 Copyright: 2013 Valve Corporation <steamos@steampowered.com>
-License: BSD-2-clause
+           2019 Alesh Slovak <aleshslovak@gmail.com>
+License: BSD-2-Clause
+
+Files: debian/*
+Copyright: 2019 Wouter Wijsman <wwijsman@live.nl>
+License: BSD-2-Clause
+
+License: BSD-2-Clause
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
  are met:
