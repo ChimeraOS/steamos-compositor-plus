@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=SteamOS
 Comment=Starts a SteamOS session
 Exec=steamos-session
