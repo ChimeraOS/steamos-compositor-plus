@@ -1,4 +1,4 @@
-AC_INIT([SteamOS Compostitor], [1.0], [linux@steampowered.com], [steamos-compositor], [http://support.steampowered.com])
+AC_INIT([SteamOS Compostitor Plus], [1.0], [aleshslovak@gmail.com], [steamos-compositor-plus], [https://github.com/gamer-os/steamos-compositor-plus/])
 AM_INIT_AUTOMAKE([foreign tar-ustar])
 PKG_CHECK_MODULES([DEPS],xxf86vm gl x11 xrender xcomposite SDL_image libudev xext xdamage)
 
