@@ -1,0 +1,9 @@
+#!/bin/bash
+if [ "$1" == "-s" ] && [ "$2" == "steamos-updatelevel" ]; then
+  echo "Version: $(lsb_release -r -s)"
+elif [ -e /usr/bin/dpkg-query ]; then
+  /usr/bin/dpkg-query $@
+else
+  echo "dpkg-query doesn't seem to be installed"
+  exit 1
+fi
