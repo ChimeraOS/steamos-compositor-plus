@@ -9,6 +9,7 @@ Homepage: https://github.com/gamer-os/steamos-compositor-plus
 Package: steamos-compositor-plus
 Architecture: any
 Depends: libsdl-image1.2 (>= 1.2.10), libudev1 (>= 183), libgl1, libsdl1.2debian (>= 1.2.11), libx11-6, libxcomposite1 (>= 1:0.3-1), libxdamage1 (>= 1:1.1), libxext6, libxfixes3 (>= 1:5.0), libxrender1, libx11-6, libxrandr2 (>= 2:1.2.0), libxxf86vm1, lsb-release, ${shlibs:Depends}, ${misc:Depends}
+Conflicts: steamos-compositor
 Description: fork of the SteamOS Compositor
  Based on SteamOS Compositor version 1.35. SteamOS Compositor Plus includes 4k
  support allows adjusting resolution/refresh rate through a configuration file,
