@@ -51,12 +51,8 @@ if [ -f "$CONFIG_FILE" ]; then
 	source "$CONFIG_FILE"
 fi
 
-if command -v proton-whitelist > /dev/null; then
-	proton-whitelist
-fi
-
-if command -v steam-input-whitelist > /dev/null; then
-	steam-input-whitelist
+if command -v steam-tweaks > /dev/null; then
+	steam-tweaks
 fi
 
 $STEAMCMD
