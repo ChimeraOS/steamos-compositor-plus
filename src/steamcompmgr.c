@@ -259,6 +259,7 @@ win_extents (Display *dpy, win *w);
 
 static Bool		doRender = True;
 static Bool		drawDebugInfo = False;
+static Bool		drawPerformanceinfo = True;
 static Bool		debugEvents = False;
 static Bool		allowUnredirection = False;
 static Bool		enableFocusHack = True;
@@ -923,6 +924,20 @@ paint_debug_info (Display *dpy)
 }
 
 static void
+paint_performance_info (Display *dpy)
+{
+	int Y = 100;
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	char messageBuffer[256];
+
+	sprintf(messageBuffer, "%.1f FPS", currentFrameRate);
+
+	paint_message(messageBuffer, Y, 1.0f, 1.0f, 1.0f); Y += textYMax;
+}
+
+static void
 paint_all (Display *dpy)
 {
 	win	*w;
@@ -1059,6 +1074,8 @@ paint_all (Display *dpy)
 	
 	if (drawDebugInfo)
 		paint_debug_info(dpy);
+	else if (drawPerformanceinfo)
+		paint_performance_info(dpy);
 	
 	glXSwapBuffers(dpy, root);
 	
@@ -2036,6 +2053,7 @@ main (int argc, char **argv)
 	if (!strstr(glGetString(GL_EXTENSIONS), "GL_NV_path_rendering"))
 	{
 		drawDebugInfo = False;
+		drawPerformanceinfo = False;
 	}
 	else
 	{
@@ -2052,7 +2070,7 @@ main (int argc, char **argv)
 	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &cursorTextureName);
 	
-	if (drawDebugInfo)
+	if (drawDebugInfo || drawPerformanceinfo)
 		init_text_rendering();
 	
 	XFree(rootVisualInfo);
