@@ -933,7 +933,6 @@ paint_performance_info (Display *dpy)
 	char messageBuffer[256];
 
 	sprintf(messageBuffer, "%.1f FPS", currentFrameRate);
-
 	paint_message(messageBuffer, Y, 1.0f, 1.0f, 1.0f); Y += textYMax;
 }
 
@@ -1074,7 +1073,7 @@ paint_all (Display *dpy)
 	
 	if (drawDebugInfo)
 		paint_debug_info(dpy);
-	else if (drawPerformanceinfo)
+	else if (drawPerformanceinfo && gameFocused)
 		paint_performance_info(dpy);
 	
 	glXSwapBuffers(dpy, root);
