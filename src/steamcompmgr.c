@@ -259,12 +259,13 @@ win_extents (Display *dpy, win *w);
 
 static Bool		doRender = True;
 static Bool		drawDebugInfo = False;
-static Bool		drawPerformanceinfo = True;
+static Bool		drawPerformanceInfo = False;
 static Bool		debugEvents = False;
 static Bool		allowUnredirection = False;
 static Bool		enableFocusHack = True;
 static Bool		enableProtonHack = True;
 static Bool		enableHackLogging = False;
+static KeyCode 	performanceInfoHotkey = 0x4c; //F10
 
 const int tfpAttribs[] = {
 	GLX_TEXTURE_TARGET_EXT, GLX_TEXTURE_2D_EXT,
@@ -1073,7 +1074,7 @@ paint_all (Display *dpy)
 	
 	if (drawDebugInfo)
 		paint_debug_info(dpy);
-	else if (drawPerformanceinfo && gameFocused)
+	else if (drawPerformanceInfo && gameFocused)
 		paint_performance_info(dpy);
 	
 	glXSwapBuffers(dpy, root);
@@ -2052,7 +2053,7 @@ main (int argc, char **argv)
 	if (!strstr(glGetString(GL_EXTENSIONS), "GL_NV_path_rendering"))
 	{
 		drawDebugInfo = False;
-		drawPerformanceinfo = False;
+		drawPerformanceInfo = False;
 	}
 	else
 	{
@@ -2069,8 +2070,7 @@ main (int argc, char **argv)
 	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &cursorTextureName);
 	
-	if (drawDebugInfo || drawPerformanceinfo)
-		init_text_rendering();
+	init_text_rendering();
 	
 	XFree(rootVisualInfo);
 	
@@ -2080,6 +2080,7 @@ main (int argc, char **argv)
 	{
 		XCompositeRedirectSubwindows (dpy, root, CompositeRedirectManual);
 	}
+	XGrabKey(dpy, performanceInfoHotkey, AnyModifier, root, True, GrabModeAsync, GrabModeAsync);
 	XSelectInput (dpy, root,
 				  SubstructureNotifyMask|
 				  ExposureMask|
@@ -2087,7 +2088,8 @@ main (int argc, char **argv)
 				  FocusChangeMask|
 				  PointerMotionMask|
 				  LeaveWindowMask|
-				  PropertyChangeMask);
+				  PropertyChangeMask |
+				  KeyPressMask);
 	XShapeSelectInput (dpy, root, ShapeNotifyMask);
 	XFixesSelectCursorInput(dpy, root, XFixesDisplayCursorNotifyMask);
 	XQueryTree (dpy, root, &root_return, &parent_return, &children, &nchildren);
@@ -2110,7 +2112,7 @@ main (int argc, char **argv)
 	globalScaleRatio = overscanScaleRatio * zoomScaleRatio;
 	
 	determine_and_apply_focus(dpy);
-	
+
 	for (;;)
 	{
 		focusDirty = False;
@@ -2335,6 +2337,12 @@ main (int argc, char **argv)
 						{
 							handle_mouse_movement( dpy, ev.xmotion.x, ev.xmotion.y );
 						}
+						break;
+					}
+					case KeyPress:
+					{
+						if (gameFocused)
+							drawPerformanceInfo = !drawPerformanceInfo;
 						break;
 					}
 					default:
