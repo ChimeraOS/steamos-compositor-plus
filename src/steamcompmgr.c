@@ -1780,18 +1780,19 @@ error (Display *dpy, XErrorEvent *ev)
 static void
 usage (char *program)
 {
-	fprintf (stderr, "%s v%s\n", program, "v4");
+	fprintf (stderr, "SteamOS Compositor Plus\n");
 	fprintf (stderr, "usage: %s [options]\n", program);
 	fprintf (stderr, "Options\n");
 	fprintf (stderr, "   -d display\n      Specifies which display should be managed.\n");
 	fprintf (stderr, "   -n\n      Normal client-side compositing with transparency support\n");
 	fprintf (stderr, "   -S\n      Enable synchronous operation (for debugging)\n");
-	fprintf (stderr, "   -v\n      Draw debug information like FPS on screen\n");
+	fprintf (stderr, "   -v\n      Draw debug information on screen\n");
 	fprintf (stderr, "   -V\n      Log events to standard output (for debugging)\n");
 	fprintf (stderr, "   -u\n      Enable undirected mode if possible\n");
 	fprintf (stderr, "   -b\n      Disable game focus hack\n");
 	fprintf (stderr, "   -p\n      Disable proton/wine color flash suppression hack\n");
 	fprintf (stderr, "   -g\n      Enable debug logging for game focus and proton hacks\n");
+	fprintf (stderr, "   -f\n      Draw FPS on screen while playing games (or activate with F10)\n");
 	exit (1);
 }
 
@@ -1881,7 +1882,7 @@ main (int argc, char **argv)
 	char	    *display = NULL;
 	int		    o;
 	
-	while ((o = getopt (argc, argv, "d:nSvVubpg")) != -1)
+	while ((o = getopt (argc, argv, "d:nSvVubpgfh")) != -1)
 	{
 		switch (o) {
 			case 'd':
@@ -1899,6 +1900,9 @@ main (int argc, char **argv)
 			case 'V':
 				debugEvents = True;
 				break;
+			case 'f':
+				drawPerformanceInfo = True;
+				break;
 			case 'u':
 				allowUnredirection = True;
 				break;
@@ -1911,6 +1915,7 @@ main (int argc, char **argv)
 			case 'g':
 				enableHackLogging = True;
 				break;
+			case 'h':
 			default:
 				usage (argv[0]);
 				break;
@@ -2341,7 +2346,7 @@ main (int argc, char **argv)
 					}
 					case KeyPress:
 					{
-						if (gameFocused)
+						if (gameFocused && strstr(glGetString(GL_EXTENSIONS), "GL_NV_path_rendering"))
 							drawPerformanceInfo = !drawPerformanceInfo;
 						break;
 					}
