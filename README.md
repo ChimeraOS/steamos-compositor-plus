@@ -8,7 +8,7 @@ It includes out of the box 4k (3840x2160) support, allows adjusting resolution/r
 Available as `steamos-compositor-plus` in the AUR.
 
 #### SteamOS
-Run the supplied `steamos-install.sh` script using the instructions below. This retrieves the latest pre-built binary release of the SteamOS compositor, and copies it across to the right location.
+Run the supplied `steamos-install.sh` script using the instructions below. This retrieves the latest pre-built binary release of the SteamOS compositor and copies it across to the right location.
 
 1. open a terminal
 2. run: `wget https://raw.githubusercontent.com/gamer-os/steamos-compositor/master/steamos-install.sh && sudo bash steamos-install.sh`
@@ -22,7 +22,7 @@ Should you wish to build from source instead of using the pre-built binaries, cl
 `autoreconf -i && ./configure && make`
 
 ### Configuration
-Upon first run, a configuration file will be created at `~/.config/steamos-compositor-plus`.
+On the first run, a configuration file will be created at `~/.config/steamos-compositor-plus`.
 You can modify this file to manually adjust the resolution and refresh rate.
 
 The variables that can be defined in the configuration file are:
