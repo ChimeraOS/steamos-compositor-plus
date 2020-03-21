@@ -29,7 +29,16 @@ if systemctl is-active --quiet bluetooth && command -v bluetoothctl > /dev/null;
 	bluetoothctl power on
 fi
 
-steamcompmgr &
+CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
+CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
+
+STEAMCMD="steam -tenfoot -steamos -enableremotecontrol -fulldesktopres"
+COMPOSITORCMD="steamcompmgr"
+if [ -f "$CONFIG_FILE" ]; then
+	source "$CONFIG_FILE"
+fi
+
+$COMPOSITORCMD &
 
 loadargb_cursor /usr/share/icons/steam/arrow.png
 
@@ -43,15 +52,6 @@ BOOTSTRAP_IMAGE="$IMAGES_DIR/bootstrapper.jpg"
 if [ ! -f "$BOOTSTRAP_IMAGE" ]; then
 	mkdir -p "$IMAGES_DIR"
 	cp /usr/share/pixmaps/steam-bootstrapper.jpg "$BOOTSTRAP_IMAGE"
-fi
-
-CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
-CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
-
-STEAMCMD="steam -tenfoot -steamos -enableremotecontrol -fulldesktopres"
-
-if [ -f "$CONFIG_FILE" ]; then
-	source "$CONFIG_FILE"
 fi
 
 if command -v steam-tweaks > /dev/null; then
