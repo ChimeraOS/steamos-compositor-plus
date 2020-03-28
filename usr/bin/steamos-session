@@ -7,7 +7,7 @@ export HOMETEST_DESKTOP_USER=desktop
 export HOMETEST_DESKTOP_SESSION=gnome
 
 export MANGOHUD=1
-export MANGOHUD_CONFIG="no_display,toggle_hud=f3"
+export MANGOHUD_CONFIG="no_display,toggle_hud=F3"
 
 # Add our bin directory with the set_hd_mode and dpkg-query replacement scripts
 export PATH=/usr/share/steamos-compositor-plus/bin:${PATH}
