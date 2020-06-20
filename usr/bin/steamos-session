@@ -32,7 +32,7 @@ fi
 CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
 CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
 
-STEAMCMD="steam -tenfoot -steamos -enableremotecontrol -fulldesktopres"
+STEAMCMD="steam -tenfoot -steamos -fulldesktopres"
 COMPOSITORCMD="steamcompmgr"
 if [ -f "$CONFIG_FILE" ]; then
 	source "$CONFIG_FILE"
