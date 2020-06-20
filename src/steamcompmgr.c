@@ -1414,6 +1414,9 @@ get_gameID (Display *dpy, win *w)
 			newGameID = 0;
 	}
 
+	if (oldGameID == 250820 /* SteamVR */)
+		newGameID = 0;
+
 	if (enableHackLogging)
 	{
 		printf ("width: '%d', ", attrib.width);
