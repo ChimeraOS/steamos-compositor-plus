@@ -1406,6 +1406,12 @@ get_gameID (Display *dpy, win *w)
 		// overrides
 		if (oldGameID == 470470 /* Birdsketball */)
 			newGameID = oldGameID;
+
+		if (attrib.width <= 64 && oldGameID == 12840 /* DiRT 2 */)
+			newGameID = 0;
+
+		if (attrib.width <= 64 && oldGameID == 12750 /* GRID (2008) */)
+			newGameID = 0;
 	}
 
 	if (enableHackLogging)
