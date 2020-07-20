@@ -920,6 +920,12 @@ paint_debug_info (Display *dpy)
 	if (gotXError) {
 		paint_message("Encountered X11 error", Y, 1.0f, 0.0f, 0.0f); Y += textYMax;
 	}
+
+	win *w = find_win(dpy, currentFocusWindow);
+	if (w && w->gameID) {
+		sprintf(messageBuffer, "Game ID: %u", w->gameID);
+		paint_message(messageBuffer, Y, 1.0f, 0.0f, 1.0f); Y += textYMax;
+	}
 }
 
 static void
