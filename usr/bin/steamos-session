@@ -14,7 +14,14 @@ export PATH=/usr/share/steamos-compositor-plus/bin:${PATH}
 
 set_hd_mode.sh >> $HOME/set_hd_mode.log
 
-export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libmodeswitch_inhibitor.so:/usr/lib/i386-linux-gnu/libmodeswitch_inhibitor.so
+# preload modeswitch-inhibitor for correct architecture.
+cpuarch=$(dpkg --print-architecture)
+
+if [ "$cpuarch" == "x86_64" ] && [ /usr/lib/x86_64-linux-gnu/libmodeswitch_inhibitor.so ]; then
+        export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libmodeswitch_inhibitor.so
+elif [ "$cpuarch" == "i386" ] && [ /usr/lib/i386-linux-gnu/libmodeswitch_inhibitor.so ]; then
+        export LD_PRELOAD=/usr/lib/i386-linux-gnu/libmodeswitch_inhibitor.so
+fi
 
 # Disable DPMS and screen blanking for now; it doesn't know about controller
 # or Steam remote control events right now
