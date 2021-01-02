@@ -1161,6 +1161,13 @@ determine_and_apply_focus (Display *dpy)
 	
 	for (w = list; w; w = w->next)
 	{
+		// Skip single pixel windows (Proton color flashes)
+		if (enableProtonHack)
+		{
+			if (w->a.width == 1 && w->a.height == 1)
+				continue;
+		}
+
 		if (w->isSteam && !gameFocused)
 		{
 			focus = w;
@@ -1406,9 +1413,6 @@ get_gameID (Display *dpy, win *w)
 	XGetWindowAttributes (dpy, w->id, &attrib);
 	if (enableProtonHack)
 	{
-		if (attrib.width == 1 && attrib.height == 1)
-			newGameID = 0;
-
 		// overrides
 		if (oldGameID == 470470 /* Birdsketball */)
 			newGameID = oldGameID;
