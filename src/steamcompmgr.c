@@ -200,6 +200,7 @@ static Atom		winDialogAtom;
 static Atom		winNormalAtom;
 static Atom		sizeHintsAtom;
 static Atom		fullscreenAtom;
+static Atom		activeWindowAtom;
 static Atom		WMStateAtom;
 static Atom		WMStateHiddenAtom;
 static Atom		netSystemTrayOpcodeAtom;
@@ -2005,6 +2006,7 @@ main (int argc, char **argv)
 	winNormalAtom = XInternAtom (dpy, "_NET_WM_WINDOW_TYPE_NORMAL", False);
 	sizeHintsAtom = XInternAtom (dpy, "WM_NORMAL_HINTS", False);
 	fullscreenAtom = XInternAtom (dpy, "_NET_WM_STATE_FULLSCREEN", False);
+	activeWindowAtom = XInternAtom (dpy, "_NET_ACTIVE_WINDOW", False);
 	WMStateAtom = XInternAtom (dpy, "_NET_WM_STATE", False);
 	WMStateHiddenAtom = XInternAtom (dpy, "_NET_WM_STATE_HIDDEN", False);
 	netSystemTrayOpcodeAtom = XInternAtom (dpy, "_NET_SYSTEM_TRAY_OPCODE", False);
@@ -2352,7 +2354,7 @@ main (int argc, char **argv)
 							}
 							break;
 						}
-						
+
 						win * w = find_win(dpy, ev.xclient.window);
 						if (w)
 						{
@@ -2361,6 +2363,10 @@ main (int argc, char **argv)
 								w->isFullscreen = ev.xclient.data.l[0];
 								
 								focusDirty = True;
+							}
+							else if (ev.xclient.data.l[1] == activeWindowAtom)
+							{
+								XRaiseWindow( dpy, w->id );
 							}
 						}
 						break;
