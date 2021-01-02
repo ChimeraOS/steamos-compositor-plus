@@ -99,6 +99,7 @@ typedef struct _win {
 	Bool isOverlay;
 	Bool isFullscreen;
 	Bool isHidden;
+	Bool isSysTrayIcon;
 	Bool sizeHintsSpecified;
 	unsigned int requestedWidth;
 	unsigned int requestedHeight;
@@ -201,6 +202,7 @@ static Atom		sizeHintsAtom;
 static Atom		fullscreenAtom;
 static Atom		WMStateAtom;
 static Atom		WMStateHiddenAtom;
+static Atom		netSystemTrayOpcodeAtom;
 
 GLXContext glContext;
 
@@ -215,6 +217,10 @@ GLXContext glContext;
 
 #define TRANSLUCENT	0x00000000
 #define OPAQUE		0xffffffff
+
+#define SYSTEM_TRAY_REQUEST_DOCK 0
+#define SYSTEM_TRAY_BEGIN_MESSAGE 1
+#define SYSTEM_TRAY_CANCEL_MESSAGE 2
 
 GLuint textPathObjects;
 GLfloat textYMin;
@@ -1161,6 +1167,11 @@ determine_and_apply_focus (Display *dpy)
 	
 	for (w = list; w; w = w->next)
 	{
+		// Always skip system tray icons
+		if ( w->isSysTrayIcon )
+		{
+			continue;
+		}
 		if (w->isSteam && !gameFocused)
 		{
 			focus = w;
@@ -1554,6 +1565,7 @@ add_win (Display *dpy, Window id, Window prev, unsigned long sequence)
 	new->gameID = 0;
 	new->isFullscreen = False;
 	new->isHidden = False;
+	new->isSysTrayIcon = False;
 	new->sizeHintsSpecified = False;
 	new->requestedWidth = 0;
 	new->requestedHeight = 0;
@@ -1965,6 +1977,14 @@ main (int argc, char **argv)
 	{
 		exit (1);
 	}
+
+	static char net_system_tray_name[] = "_NET_SYSTEM_TRAY_Sxx";
+
+	snprintf(net_system_tray_name, sizeof(net_system_tray_name),
+			 "_NET_SYSTEM_TRAY_S%d", scr);
+	Atom net_system_tray = XInternAtom(dpy, net_system_tray_name, False);
+
+	XSetSelectionOwner(dpy, net_system_tray, ourWindow, 0);
 	
 	/* get atoms */
 	steamAtom = XInternAtom (dpy, STEAM_PROP, False);
@@ -1987,6 +2007,7 @@ main (int argc, char **argv)
 	fullscreenAtom = XInternAtom (dpy, "_NET_WM_STATE_FULLSCREEN", False);
 	WMStateAtom = XInternAtom (dpy, "_NET_WM_STATE", False);
 	WMStateHiddenAtom = XInternAtom (dpy, "_NET_WM_STATE_HIDDEN", False);
+	netSystemTrayOpcodeAtom = XInternAtom (dpy, "_NET_SYSTEM_TRAY_OPCODE", False);
 	
 	pa.subwindow_mode = IncludeInferiors;
 	
@@ -2304,6 +2325,34 @@ main (int argc, char **argv)
 					break;
 					case ClientMessage:
 					{
+						if (ev.xclient.window == ourWindow && ev.xclient.message_type == netSystemTrayOpcodeAtom)
+						{
+							long opcode = ev.xclient.data.l[1];
+
+							switch (opcode) {
+								case SYSTEM_TRAY_REQUEST_DOCK: {
+									Window embed_id = ev.xclient.data.l[2];
+
+									/* At this point we're supposed to initiate the XEmbed lifecycle by
+									* sending XEMBED_EMBEDDED_NOTIFY. However we don't actually need to
+									* render the systray, we just want to recognize and blacklist these
+									* icons. So for now do nothing. */
+
+									win *w = find_win(dpy, embed_id);
+									if (w) {
+										w->isSysTrayIcon = True;
+									}
+									break;
+								}
+								default:
+									if (debugEvents)
+									{
+										fprintf(stderr, "Unhandled _NET_SYSTEM_TRAY_OPCODE %ld\n", opcode);
+									}
+							}
+							break;
+						}
+						
 						win * w = find_win(dpy, ev.xclient.window);
 						if (w)
 						{
