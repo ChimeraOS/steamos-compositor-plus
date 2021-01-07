@@ -1168,10 +1168,24 @@ determine_and_apply_focus (Display *dpy)
 	
 	for (w = list; w; w = w->next)
 	{
-		// Skip single pixel windows (Proton color flashes)
-		if (enableProtonHack)
+		if (enableProtonHack
+			&& w->gameID != 470470 /* Birdsketball */
+		)
 		{
+			// Skip single pixel windows (Proton color flashes)
 			if (w->a.width == 1 && w->a.height == 1)
+				continue;
+
+			// Skip unsightly gray box
+			if (w->a.height <= 256 && w->gameID == 12840 /* DiRT 2 */)
+				continue;
+
+			// Skip unsightly gray box
+			if (w->a.height <= 256 && w->gameID == 12750 /* GRID (2008) */)
+				continue;
+
+			// Skip unsightly splash screen
+			if (w->a.height <= 256 && w->gameID == 310950 /* Street Fighter V */)
 				continue;
 		}
 
@@ -1424,21 +1438,6 @@ get_gameID (Display *dpy, win *w)
 	}
 
 	XGetWindowAttributes (dpy, w->id, &attrib);
-	if (enableProtonHack)
-	{
-		// overrides
-		if (oldGameID == 470470 /* Birdsketball */)
-			newGameID = oldGameID;
-
-		if (attrib.width <= 64 && oldGameID == 12840 /* DiRT 2 */)
-			newGameID = 0;
-
-		if (attrib.width <= 64 && oldGameID == 12750 /* GRID (2008) */)
-			newGameID = 0;
-	}
-
-	if (oldGameID == 250820 /* SteamVR */)
-		newGameID = 0;
 
 	if (enableHackLogging)
 	{
