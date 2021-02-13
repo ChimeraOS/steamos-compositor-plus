@@ -1278,6 +1278,18 @@ determine_and_apply_focus (Display *dpy)
 		set_win_hidden(dpy, find_win(dpy, currentFocusWindow), True);
 	}
 
+	if ( debugEvents )
+	{
+		if ( currentFocusWindow != focus->id )
+		{
+			printf("determine_and_apply_focus: focus window was 0x%lx, is now 0x%lx\n", currentFocusWindow, focus->id );
+			char buf[512];
+			sprintf( buf,  "xwininfo -all -id 0x%lx; xprop -id 0x%lx; xwininfo -root -tree", focus->id, focus->id );
+			if ( system( buf ) != 0 )
+				fprintf (stderr, "Failed to get window info\n");
+		}
+	}
+	
 	currentFocusWindow = focus->id;
 	w = focus;
 	
