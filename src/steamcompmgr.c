@@ -1864,6 +1864,129 @@ usage (char *program)
 	exit (1);
 }
 
+static void
+debug_event (XEvent evt)
+{
+	switch (evt.type) {
+		case CreateNotify:
+			printf ("XEvent CreateNotify - Window 0x%lx\n", evt.xcreatewindow.window);
+			break;
+		case ConfigureNotify:
+			printf ("XEvent ConfigureNotify - Window 0x%lx\n", evt.xconfigure.window);
+			break;
+		case DestroyNotify:
+			printf ("XEvent DestroyNotify - Window 0x%lx\n", evt.xdestroywindow.window);
+			break;
+		case MapNotify:
+			printf ("XEvent MapNotify - Window 0x%lx\n", evt.xmap.window);
+			break;
+		case UnmapNotify:
+			printf ("XEvent UnmapNotify - Window 0x%lx\n", evt.xunmap.window);
+			break;
+		case ReparentNotify:
+			printf ("XEvent ReparentNotify - Window 0x%lx\n", evt.xreparent.window);
+			break;
+		case CirculateNotify:
+			printf ("XEvent CirculateNotify - Window 0x%lx\n", evt.xcirculate.window);
+			break;
+		case Expose:
+			printf ("XEvent Expose - Window 0x%lx\n", evt.xexpose.window);
+			break;
+		case PropertyNotify:
+			printf ("XEvent PropertyNotify - Window 0x%lx ", evt.xproperty.window);
+			if (evt.xproperty.atom == screenScaleAtom)
+			{
+				printf ("- overscanScaleRatio now %f, ", overscanScaleRatio);
+				printf ("globalScaleRatio now %f", globalScaleRatio);
+			}
+			if (evt.xproperty.atom == screenZoomAtom)
+			{
+				printf ("- zoomScaleRatio now %f, ", zoomScaleRatio);
+				printf ("globalScaleRatio now %f", globalScaleRatio);
+			}
+			if (evt.xproperty.atom == opacityAtom)
+			{
+				printf ("- opacity changed");
+			}
+			if (evt.xproperty.atom == sizeHintsAtom)
+			{
+				printf ("- size hints changed");
+			}
+			if (evt.xproperty.atom == gamesRunningAtom)
+			{
+				printf("- games running count now %i", gamesRunningCount);
+			}
+			if (evt.xproperty.atom == gameAtom)
+			{
+				printf("- game property changed");
+			}
+			if (evt.xproperty.atom == steamAtom)
+			{
+				printf("- steam property changed");
+			}
+			if (evt.xproperty.atom == overlayAtom)
+			{
+				printf("- overlay property changed");
+			}
+
+			printf ("\n");
+			break;
+		case ClientMessage:
+			printf ("XEvent ClientMessage - Window 0x%lx ", evt.xclient.window);
+			if (evt.xclient.window == ourWindow && evt.xclient.message_type == netSystemTrayOpcodeAtom)
+			{
+				long opcode = evt.xclient.data.l[1];
+
+				switch (opcode) {
+					case SYSTEM_TRAY_REQUEST_DOCK: {
+						Window embed_id = evt.xclient.data.l[2];
+						printf("- registered window 0x%lx as a system tray icon", embed_id);
+						break;
+					}
+					default:
+						printf("- unhandled _NET_SYSTEM_TRAY_OPCODE %ld", opcode);
+				}
+			}
+			if (evt.xclient.data.l[1] == fullscreenAtom)
+			{
+				printf("- requested fullscreen");
+			}
+			if (evt.xclient.data.l[1] == activeWindowAtom)
+			{
+				printf("- requested activation");
+			}
+			printf ("\n");
+			break;
+		case LeaveNotify:
+			printf ("XEvent LeaveNotify - Window 0x%lx\n", evt.xcrossing.window);
+			break;
+		case MotionNotify:
+			printf ("XEvent MotionNotify - Window 0x%lx\n", evt.xmotion.window);
+			break;
+		case FocusIn:
+			printf ("XEvent FocusIn - Window 0x%lx\n", evt.xfocus.window);
+			break;
+		case FocusOut:
+			printf ("XEvent FocusOut - Window 0x%lx\n", evt.xfocus.window);
+			break;
+		default:
+			if (evt.type == damage_event + XDamageNotify)
+			{
+				XDamageNotifyEvent *de = (XDamageNotifyEvent *) &evt;
+				printf ("XEvent XDamageNotify - Window 0x%lx\n", de->drawable);
+			}
+			else if (evt.type == xfixes_event + XFixesCursorNotify)
+			{
+				XFixesCursorNotifyEvent *me = (XFixesCursorNotifyEvent *) &evt;
+				printf ("XEvent XFixesCursorNotify - Window 0x%lx\n", me->window);
+			}
+			else{
+				printf ("Unhandled XEvent %x\n", evt.type);
+			}
+			break;
+	}
+}
+
 static Bool
 register_cm (Display *dpy)
 {
@@ -2196,12 +2319,10 @@ main (int argc, char **argv)
 		
 		do {
 			XNextEvent (dpy, &ev);
+
 			if ((ev.type & 0x7f) != KeymapNotify)
 				discard_ignore (dpy, ev.xany.serial);
-			if (debugEvents)
-			{
-				printf ("event %x\n", ev.type);
-			}
+
 			switch (ev.type) {
 				case CreateNotify:
 					if (ev.xcreatewindow.parent == root)
@@ -2404,11 +2525,6 @@ main (int argc, char **argv)
 									}
 									break;
 								}
-								default:
-									if (debugEvents)
-									{
-										fprintf(stderr, "Unhandled _NET_SYSTEM_TRAY_OPCODE %ld\n", opcode);
-									}
 							}
 							break;
 						}
@@ -2459,6 +2575,9 @@ main (int argc, char **argv)
 						}
 						break;
 			}
+
+			if (debugEvents)
+				debug_event(ev);
 		} while (QLength (dpy));
 		
 		if (focusDirty == True)
