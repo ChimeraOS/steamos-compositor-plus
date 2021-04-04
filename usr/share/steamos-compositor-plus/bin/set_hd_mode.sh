@@ -27,7 +27,7 @@ function first_by_prefix_order() {
     done
 }
 
-GOODMODES=("3840x2160" "1920x1080" "1280x720")
+GOODMODES=("3840x2160" "2560x1440" "1920x1080" "1280x720")
 GOODRATES=("60.0" "59.9") # CEA modes guarantee or one the other, but not both?
 
 CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
@@ -37,7 +37,7 @@ CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
 if [ -f "$CONFIG_FILE" ]; then
     source "$CONFIG_FILE"
 else
-    echo '#GOODMODES=("3840x2160" "1920x1080" "1280x720")' > "$CONFIG_FILE"
+    echo '#GOODMODES=("3840x2160" "2560x1440" "1920x1080" "1280x720")' > "$CONFIG_FILE"
     echo '#GOODRATES=("60.0" "59.9")' >> "$CONFIG_FILE"
 fi
 
