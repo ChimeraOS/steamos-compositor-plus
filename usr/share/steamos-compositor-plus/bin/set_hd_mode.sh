@@ -29,6 +29,7 @@ function first_by_prefix_order() {
 
 GOODMODES=("3840x2160" "2560x1440" "1920x1080" "1280x720")
 GOODRATES=("60.0" "59.9") # CEA modes guarantee or one the other, but not both?
+ROTATION=
 
 CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
 CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
@@ -39,6 +40,7 @@ if [ -f "$CONFIG_FILE" ]; then
 else
     echo '#GOODMODES=("3840x2160" "2560x1440" "1920x1080" "1280x720")' > "$CONFIG_FILE"
     echo '#GOODRATES=("60.0" "59.9")' >> "$CONFIG_FILE"
+    echo '#ROTATION=' >> "$CONFIG_FILE"
 fi
 
 # First, some logging
@@ -77,10 +79,30 @@ if [ $(contains "${GOODMODES[@]}" "$CURRENT_MODE") == "y" ]; then
 	fi
 fi
 
+w=`echo $CURRENT_MODE | cut -dx -f1`
+h=`echo $CURRENT_MODE | cut -dx -f2`
+if [ "$h" -gt "$w" ]; then
+	TRANSPOSED=true
+fi
+
+if [ -z "$ROTATION" ] && [ "$TRANSPOSED" = true ]; then
+	ROTATION=right
+fi
+
+if [ -z "$ROTATION" ]; then
+	ROTATION=normal
+fi
+
 # Otherwise try to set combinations of good modes/rates until it works
 for goodmode in "${GOODMODES[@]}"; do
+	if [ "$TRANSPOSED" = true ]; then
+		w=`echo $goodmode | cut -dx -f1`
+		h=`echo $goodmode | cut -dx -f2`
+		goodmode=${h}x${w}
+	fi
+
 	for goodrate in "${GOODRATES[@]}"; do
-		xrandr --output "$OUTPUT_NAME" --mode "$goodmode" --refresh "$goodrate"
+		xrandr --output "$OUTPUT_NAME" --mode "$goodmode" --refresh "$goodrate" --rotation "$ROTATION"
 		# If good return, we're done
 		if [[ $? -eq 0 ]]; then
 			exit 0
