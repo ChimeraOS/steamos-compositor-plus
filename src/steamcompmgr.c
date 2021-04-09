@@ -95,6 +95,7 @@ typedef struct _win {
 	unsigned long	damage_sequence;
 	
 	Bool isSteam;
+	Bool isSteamVR;
 	unsigned long long int gameID;
 	Bool isOverlay;
 	Bool isFullscreen;
@@ -1158,6 +1159,8 @@ determine_and_apply_focus (Display *dpy)
 	Bool usingOverrideRedirectWindow = False;
 	
 	unsigned int maxOpacity = 0;
+
+	Bool hasGameWindow = False;
 	
 	if (unredirectedWindow != None)
 	{
@@ -1166,6 +1169,13 @@ determine_and_apply_focus (Display *dpy)
 		unredirectedWindow = None;
 	}
 	
+	for (w = list; w; w = w->next)
+	{
+		if (w->gameID && !w->isSteamVR) {
+			hasGameWindow = True;
+		}
+	}
+
 	for (w = list; w; w = w->next)
 	{
 		if (enableProtonHack
@@ -1192,6 +1202,11 @@ determine_and_apply_focus (Display *dpy)
 		// Always skip system tray icons
 		if ( w->isSysTrayIcon )
 		{
+			continue;
+		}
+
+		// hide SteamVR windows when a game is running
+		if (w->isSteamVR && hasGameWindow) {
 			continue;
 		}
 
@@ -1449,6 +1464,25 @@ get_gameID (Display *dpy, win *w)
 	return newGameID;
 }
 
+static Bool
+get_SteamVR (Display *dpy, win *w)
+{
+	XClassHint hint;
+
+	if (XGetClassHint (dpy, w->id, &hint) > 0)
+	{
+		if (strcmp (hint.res_name, "vrwebhelper") == 0 || strcmp (hint.res_name, "vrmonitor") == 0)
+		{
+			return True;
+		}
+
+		XFree (hint.res_name);
+		XFree (hint.res_class);
+	}
+
+	return False;
+}
+
 static void
 map_win (Display *dpy, Window id, unsigned long sequence)
 {
@@ -1467,6 +1501,7 @@ map_win (Display *dpy, Window id, unsigned long sequence)
 	w->opacity = get_prop (dpy, w->id, opacityAtom, TRANSLUCENT);
 	
 	w->isSteam = get_prop (dpy, w->id, steamAtom, 0);
+	w->isSteamVR = get_SteamVR (dpy, w);
 	w->isOverlay = get_prop (dpy, w->id, overlayAtom, 0);
 	w->gameID = get_gameID (dpy, w);
 
@@ -1567,6 +1602,7 @@ add_win (Display *dpy, Window id, Window prev, unsigned long sequence)
 	
 	new->isOverlay = False;
 	new->isSteam = False;
+	new->isSteamVR = False;
 	new->gameID = 0;
 	new->isFullscreen = False;
 	new->isHidden = False;
