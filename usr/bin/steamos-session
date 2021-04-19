@@ -12,7 +12,7 @@ export MANGOHUD_CONFIG="no_display,toggle_hud=F3"
 # Add our bin directory with the set_hd_mode and dpkg-query replacement scripts
 export PATH=/usr/share/steamos-compositor-plus/bin:${PATH}
 
-set_hd_mode.sh >> $HOME/set_hd_mode.log
+set_hd_mode.sh >> $HOME/.set_hd_mode.log
 
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libmodeswitch_inhibitor.so:/usr/lib/i386-linux-gnu/libmodeswitch_inhibitor.so
 
