@@ -1025,6 +1025,7 @@ paint_all (Display *dpy)
 		w = find_win(dpy, currentFocusWindow);
 		ensure_win_resources(dpy, w);
 		// Just draw focused window as normal, be it Steam or the game
+		w->opacity = OPAQUE;
 		paint_window(dpy, w, False, False);
 		
 		if (focusedWindowNeedsScale)
@@ -1041,6 +1042,7 @@ paint_all (Display *dpy)
 				fadeOutWindowGone = False;
 			}
 			fadeOutWindow.id = None;
+			fadeOutWindow.opacity = TRANSLUCENT;
 			
 			// Finished fading out, mark previous window hidden
 			set_win_hidden(dpy, &fadeOutWindow, True);
