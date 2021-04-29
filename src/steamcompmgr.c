@@ -288,10 +288,9 @@ const int tfpAttribsRGBA[] = {
 static unsigned int
 get_time_in_milliseconds (void)
 {
-	struct timeval  tv;
-	
-	gettimeofday (&tv, NULL);
-	return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+	return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
 }
 
 static void
