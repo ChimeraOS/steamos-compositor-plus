@@ -930,7 +930,7 @@ paint_debug_info (Display *dpy)
 
 	win *w = find_win(dpy, currentFocusWindow);
 	if (w && w->gameID) {
-		sprintf(messageBuffer, "Game ID: %u", w->gameID);
+		sprintf(messageBuffer, "Game ID: %llu", w->gameID);
 		paint_message(messageBuffer, Y, 1.0f, 0.0f, 1.0f); Y += textYMax;
 	}
 }
@@ -1437,7 +1437,7 @@ get_gameID (Display *dpy, win *w)
 		newGameID = 1;
 
 	if (enableHackLogging)
-		printf ("window id: '0x%x', ", w->id);
+		printf ("window id: '0x%lx', ", w->id);
 
 	if (XGetClassHint (dpy, w->id, &hint) > 0)
 	{
