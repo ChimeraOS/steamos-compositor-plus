@@ -888,14 +888,20 @@ paint_debug_info (Display *dpy)
 	
 	char messageBuffer[256];
 	
-	sprintf(messageBuffer, "Compositing at %.1f FPS", currentFrameRate);
+	sprintf(messageBuffer, "Compositing at %6.1f FPS", currentFrameRate);
 	
 	paint_message(messageBuffer, Y, 1.0f, 1.0f, 1.0f); Y += textYMax;
-	if (find_win(dpy, currentFocusWindow))
+	win *w = find_win(dpy, currentFocusWindow);
+	if (w)
 	{
 		if (gameFocused)
 		{
-			sprintf(messageBuffer, "Presenting game window %x", (unsigned int)currentFocusWindow);
+			if ( w->opacity < OPAQUE) {
+				sprintf(messageBuffer, "Compositing game window 0x%lx at opacity %.2f%%", (unsigned int)currentFocusWindow, (w->opacity / (float)OPAQUE) * 100);
+			} else {
+				sprintf(messageBuffer, "Presenting game window 0x%lx", (unsigned int)currentFocusWindow);
+			}
+			
 			paint_message(messageBuffer, Y, 0.0f, 1.0f, 0.0f); Y += textYMax;
 		}
 		else
@@ -910,13 +916,13 @@ paint_debug_info (Display *dpy)
 	
 	if (overlay && gamesRunningCount && overlay->opacity)
 	{
-		sprintf(messageBuffer, "Compositing overlay at opacity %f", overlay->opacity / (float)OPAQUE);
+		sprintf(messageBuffer, "Compositing overlay at opacity %.2f%%", (overlay->opacity / (float)OPAQUE) * 100);
 		paint_message(messageBuffer, Y, 1.0f, 0.0f, 1.0f); Y += textYMax;
 	}
 	
 	if (notification && gamesRunningCount && notification->opacity)
 	{
-		sprintf(messageBuffer, "Compositing notification at opacity %f", notification->opacity / (float)OPAQUE);
+		sprintf(messageBuffer, "Compositing notification at opacity %.2f%%", (notification->opacity / (float)OPAQUE) * 100);
 		paint_message(messageBuffer, Y, 1.0f, 0.0f, 1.0f); Y += textYMax;
 	}
 	
@@ -928,7 +934,6 @@ paint_debug_info (Display *dpy)
 		paint_message("Encountered X11 error", Y, 1.0f, 0.0f, 0.0f); Y += textYMax;
 	}
 
-	win *w = find_win(dpy, currentFocusWindow);
 	if (w && w->gameID) {
 		sprintf(messageBuffer, "Game ID: %u", w->gameID);
 		paint_message(messageBuffer, Y, 1.0f, 0.0f, 1.0f); Y += textYMax;
@@ -1270,7 +1275,7 @@ determine_and_apply_focus (Display *dpy)
 	{
 		set_win_hidden(dpy, find_win(dpy, currentFocusWindow), True);
 	}
-	
+
 	currentFocusWindow = focus->id;
 	w = focus;
 	
@@ -1803,11 +1808,11 @@ error (Display *dpy, XErrorEvent *ev)
 	}
 	o = ev->error_code - render_error;
 	switch (o) {
-		case BadPictFormat: name ="BadPictFormat"; break;
-		case BadPicture: name ="BadPicture"; break;
-		case BadPictOp: name ="BadPictOp"; break;
-		case BadGlyphSet: name ="BadGlyphSet"; break;
-		case BadGlyph: name ="BadGlyph"; break;
+		case BadPictFormat: name = "BadPictFormat"; break;
+		case BadPicture: name = "BadPicture"; break;
+		case BadPictOp: name = "BadPictOp"; break;
+		case BadGlyphSet: name = "BadGlyphSet"; break;
+		case BadGlyph: name = "BadGlyph"; break;
 		default: break;
 	}
 	
