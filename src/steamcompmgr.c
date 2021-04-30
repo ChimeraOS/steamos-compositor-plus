@@ -172,7 +172,7 @@ Bool			focusDirty = False;
 
 unsigned long	damageSequence = 0;
 
-#define			CURSOR_HIDE_TIME 10000
+unsigned long	cursor_hide_time = 10000;
 
 Bool			gotXError = False;
 
@@ -1842,6 +1842,7 @@ usage (char *program)
 	fprintf (stderr, "   -b\n      Disable game focus hack\n");
 	fprintf (stderr, "   -p\n      Disable proton/wine color flash suppression hack\n");
 	fprintf (stderr, "   -g\n      Enable debug logging for game focus and proton hacks\n");
+	fprintf (stderr, "   -M ms\n      Duration for auto-hide the cursor in ms (0 = disabled).\n");
 	exit (1);
 }
 
@@ -1931,7 +1932,7 @@ main (int argc, char **argv)
 	char	    *display = NULL;
 	int		    o;
 	
-	while ((o = getopt (argc, argv, "d:nSvVubpg")) != -1)
+	while ((o = getopt (argc, argv, "d:nSvVubpgM:")) != -1)
 	{
 		switch (o) {
 			case 'd':
@@ -1960,6 +1961,9 @@ main (int argc, char **argv)
 				break;
 			case 'g':
 				enableHackLogging = True;
+				break;
+			case 'M':
+				cursor_hide_time = strtoul(optarg, NULL, 10);
 				break;
 			default:
 				usage (argv[0]);
@@ -2425,7 +2429,7 @@ main (int argc, char **argv)
 						win * w = find_win(dpy, ev.xmotion.window);
 						if (w && w->id == currentFocusWindow)
 						{
-							handle_mouse_movement( dpy, ev.xmotion.x, ev.xmotion.y );
+							handle_mouse_movement( dpy, ev.xmotion.x_root, ev.xmotion.y_root );
 						}
 						break;
 					}
@@ -2469,9 +2473,9 @@ main (int argc, char **argv)
 				lastCursorMovedTime = get_time_in_milliseconds();
 				apply_cursor_state(dpy);
 			}
-			
-			if (!hideCursorForMovement &&
-				(get_time_in_milliseconds() - lastCursorMovedTime) > CURSOR_HIDE_TIME)
+
+			if (!hideCursorForMovement && cursor_hide_time &&
+				(get_time_in_milliseconds() - lastCursorMovedTime) > cursor_hide_time)
 			{
 				hideCursorForMovement = True;
 				apply_cursor_state(dpy);
