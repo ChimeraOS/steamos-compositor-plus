@@ -1,0 +1,8 @@
+XF86AudioRaiseVolume
+	pactl set-sink-volume @DEFAULT_SINK@ +1000 && aplay $HOME/.local/share/Steam/tenfoot/resource/sounds/volume_change.wav
+
+XF86AudioLowerVolume
+	pactl set-sink-volume @DEFAULT_SINK@ -1000 && aplay $HOME/.local/share/Steam/tenfoot/resource/sounds/volume_change.wav
+
+XF86AudioMute
+	pactl set-sink-mute @DEFAULT_SINK@ toggle && aplay $HOME/.local/share/Steam/tenfoot/resource/sounds/volume_change.wav
