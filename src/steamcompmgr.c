@@ -897,9 +897,9 @@ paint_debug_info (Display *dpy)
 		if (gameFocused)
 		{
 			if ( w->opacity < OPAQUE) {
-				sprintf(messageBuffer, "Compositing game window 0x%lx at opacity %.2f%%", (unsigned int)currentFocusWindow, (w->opacity / (float)OPAQUE) * 100);
+				sprintf(messageBuffer, "Compositing game window 0x%x at opacity %.2f%%", (unsigned int)currentFocusWindow, (w->opacity / (float)OPAQUE) * 100);
 			} else {
-				sprintf(messageBuffer, "Presenting game window 0x%lx", (unsigned int)currentFocusWindow);
+				sprintf(messageBuffer, "Presenting game window 0x%x", (unsigned int)currentFocusWindow);
 			}
 			
 			paint_message(messageBuffer, Y, 0.0f, 1.0f, 0.0f); Y += textYMax;
