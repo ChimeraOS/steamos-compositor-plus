@@ -3,7 +3,7 @@ Description=Simple X Hotkey Daemon
 After=default.target
 
 [Service]
-ExecStart=/usr/bin/sxhkd -c /usr/share/steamos-compositor-plus/sxhkdrc
+ExecStart=/usr/bin/sxhkd -c /etc/steamos-compositor-plus/sxhkdrc
 ExecReload=/usr/bin/kill -SIGUSR1 $MAINPID
 Restart=always
 
