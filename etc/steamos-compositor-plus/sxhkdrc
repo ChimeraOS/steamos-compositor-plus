@@ -1,8 +1,8 @@
-XF86AudioRaiseVolume
-	pactl set-sink-volume @DEFAULT_SINK@ +1000 && aplay $HOME/.local/share/Steam/tenfoot/resource/sounds/volume_change.wav
+XF86Audio{RaiseVolume,LowerVolume,Mute}
+	/usr/share/steamos-compositor-plus/bin/audio_{volup,voldown,mute}.sh
 
-XF86AudioLowerVolume
-	pactl set-sink-volume @DEFAULT_SINK@ -1000 && aplay $HOME/.local/share/Steam/tenfoot/resource/sounds/volume_change.wav
+XF86MonBrightness{Up,Down}
+	/usr/share/steamos-compositor-plus/bin/brightness_{up,down}.sh
 
-XF86AudioMute
-	pactl set-sink-mute @DEFAULT_SINK@ toggle && aplay $HOME/.local/share/Steam/tenfoot/resource/sounds/volume_change.wav
+super + p
+	/usr/share/steamos-compositor-plus/bin/screen_toggle.sh
