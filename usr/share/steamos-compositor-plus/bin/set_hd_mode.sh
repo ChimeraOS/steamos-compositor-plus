@@ -102,7 +102,7 @@ for goodmode in "${GOODMODES[@]}"; do
 	fi
 
 	for goodrate in "${GOODRATES[@]}"; do
-		xrandr --output "$OUTPUT_NAME" --mode "$goodmode" --refresh "$goodrate" --rotation "$ROTATION"
+		xrandr --output "$OUTPUT_NAME" --mode "$goodmode" --refresh "$goodrate" --rotate "$ROTATION"
 		# If good return, we're done
 		if [[ $? -eq 0 ]]; then
 			exit 0
