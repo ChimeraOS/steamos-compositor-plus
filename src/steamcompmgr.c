@@ -216,6 +216,7 @@ GLXContext glContext;
 #define GAMES_RUNNING_PROP 	"STEAM_GAMES_RUNNING"
 #define SCREEN_SCALE_PROP	"STEAM_SCREEN_SCALE"
 #define SCREEN_MAGNIFICATION_PROP	"STEAM_SCREEN_MAGNIFICATION"
+#define CONTROLLER_CONFIG_APP_ID	413090
 
 #define TRANSLUCENT	0x00000000
 #define OPAQUE		0xffffffff
@@ -934,7 +935,7 @@ paint_debug_info (Display *dpy)
 		paint_message("Encountered X11 error", Y, 1.0f, 0.0f, 0.0f); Y += textYMax;
 	}
 
-	if (w && w->gameID) {
+	if (w && gameFocused && w->gameID) {
 		sprintf(messageBuffer, "Game ID: %llu", w->gameID);
 		paint_message(messageBuffer, Y, 1.0f, 0.0f, 1.0f); Y += textYMax;
 	}
@@ -1177,7 +1178,7 @@ determine_and_apply_focus (Display *dpy)
 	
 	for (w = list; w; w = w->next)
 	{
-		if (w->gameID && !w->isSteamVR) {
+		if (w->gameID && !w->isSteamVR && w->gameID != CONTROLLER_CONFIG_APP_ID) {
 			hasGameWindow = True;
 		}
 	}
@@ -1205,6 +1206,13 @@ determine_and_apply_focus (Display *dpy)
 				continue;
 		}
 
+		// Skip Steam Controller Configs App only when another app is running
+		// (needs focus otherwise for rendering BPM)
+		if (w->gameID == CONTROLLER_CONFIG_APP_ID && hasGameWindow)
+		{
+			continue;
+		}
+
 		// Always skip system tray icons
 		if ( w->isSysTrayIcon )
 		{
@@ -1230,7 +1238,7 @@ determine_and_apply_focus (Display *dpy)
 			(!windowIsOverrideRedirect || !usingOverrideRedirectWindow))
 		{
 			focus = w;
-			gameFocused = True;
+			gameFocused = w->gameID != CONTROLLER_CONFIG_APP_ID;
 			maxDamageSequence = w->damage_sequence;
 			
 			if (windowIsOverrideRedirect)
