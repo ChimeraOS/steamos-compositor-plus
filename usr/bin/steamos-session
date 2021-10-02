@@ -33,6 +33,18 @@ CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
 
 STEAMCMD="steam -tenfoot -steamos -fulldesktopres"
 COMPOSITORCMD="steamcompmgr"
+
+# Source environment from ~/.config/environment.d
+for i in "~/.config/environment.d/*.conf" ;
+do
+    if [ -f "${i}" ]; then
+        set -a
+        source "${i}"
+        set +a
+    fi
+done
+
+# Source our config file
 if [ -f "$CONFIG_FILE" ]; then
 	source "$CONFIG_FILE"
 fi
