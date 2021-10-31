@@ -93,6 +93,24 @@ if [ -z "$ROTATION" ]; then
 	ROTATION=normal
 fi
 
+# detect and rotate touch screen
+TOUCHSCREEN=$(udevadm info --export-db | sed 's/^$/;;/' | tr '\n' '%%' | tr ';;' '\n' | grep ID_INPUT_TOUCHSCREEN=1 | tr '%%' '\n' | grep "E: NAME=" | head -1 | cut -d\" -f 2)
+if [ -n "$TOUCHSCREEN" ]; then
+	MATRIX="1 0 0 0 1 0 0 0 1"
+
+	if [ "$ROTATION" = "right" ]; then
+		MATRIX="0 1 0 -1 0 1 0 0 1"
+	elif [ "$ROTATION" = "left" ]; then
+		MATRIX="0 -1 1 1 0 0 0 0 1"
+	elif [ "$ROTATION" = "normal" ]; then
+		MATRIX="1 0 0 0 1 0 0 0 1"
+	elif [ "$ROTATION" = "inverted" ]; then
+		MATRIX="-1 0 1 0 -1 1 0 0 1"
+	fi
+
+	xinput set-prop "pointer:$TOUCHSCREEN" --type=float "Coordinate Transformation Matrix" $MATRIX
+fi
+
 # Otherwise try to set combinations of good modes/rates until it works
 for goodmode in "${GOODMODES[@]}"; do
 	if [ "$TRANSPOSED" = true ]; then
