@@ -70,3 +70,4 @@ if command -v steam-tweaks > /dev/null; then
 fi
 
 $STEAMCMD
+#$STEAMCMD > /tmp/steam_stdout.log 2>&1
