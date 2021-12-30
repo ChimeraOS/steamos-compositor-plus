@@ -1233,7 +1233,7 @@ determine_and_apply_focus (Display *dpy)
 		// a choice between two windows we always prefer the non-override redirect one.
 		Bool windowIsOverrideRedirect = w->a.override_redirect && !w->ignoreOverrideRedirect;
 		
-		if (w->gameID && w->a.map_state == IsViewable && w->a.class == InputOutput &&
+		if (w->gameID && !gameFocused && w->a.map_state == IsViewable && w->a.class == InputOutput &&
 			(w->damage_sequence >= maxDamageSequence) &&
 			(!windowIsOverrideRedirect || !usingOverrideRedirectWindow))
 		{
