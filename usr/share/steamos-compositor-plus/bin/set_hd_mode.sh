@@ -87,6 +87,10 @@ fi
 
 if [ -z "$ROTATION" ] && [ "$TRANSPOSED" = true ]; then
 	ROTATION=right
+
+	if [ "$(cat /sys/devices/virtual/dmi/id/product_name)" == "ONE XPLAYER" ]; then
+		ROTATION=left
+	fi
 fi
 
 if [ -z "$ROTATION" ]; then
