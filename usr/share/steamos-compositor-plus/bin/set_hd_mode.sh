@@ -15,6 +15,31 @@ function contains() {
     return 1
 }
 
+# Devices with incorrect EDID readings need to have modes added before the compositor loads for it to work correctly
+
+if [ "$(cat /sys/devices/virtual/dmi/id/product_name)" == "ONE XPLAYER" ]; then
+    xrandr --newmode "400x640"   20.25  400 424 456 512  640 643 653 665 -hsync +vsync
+    xrandr --addmode eDP1 400x640
+
+    xrandr --newmode "600x960"   47.25  600 640 696 792  960 963 973 996 -hsync +vsync
+    xrandr --addmode eDP1 600x960
+
+    xrandr --newmode "800x1280"  85.25  800 856 936 1072 1280 1283 1293 1327 -hsync +vsync
+    xrandr --addmode eDP1 800x1280
+
+    xrandr --newmode "900x1440"   109.50  904 968 1064 1224  1440 1443 1453 1493 -hsync +vsync
+    xrandr --addmode eDP1 900x1440
+
+    xrandr --newmode "1050x1680"   150.25  1056 1136 1248 1440  1680 1683 1693 1741 -hsync +vsync
+    xrandr --addmode eDP1 1050x1680
+
+    xrandr --newmode "1200x1920"   196.50  1200 1296 1424 1648  1920 1923 1933 1989 -hsync +vsync
+    xrandr --addmode eDP1 1200x1920
+
+    xrandr --newmode "1600x2560"   353.50  1600 1736 1912 2224  2560 2563 2573 2651 -hsync +vsync
+    xrandr --addmode eDP1 1600x2560
+fi
+
 # This function echoes the first element from first argument array, matching a
 # prefix in the order given by second argument array.
 function first_by_prefix_order() {
@@ -30,6 +55,12 @@ function first_by_prefix_order() {
 GOODMODES=("3840x2160" "2560x1600" "2560x1440" "1920x1200" "1920x1080" "1280x800" "1280x720")
 GOODRATES=("60.0" "59.9") # CEA modes guarantee or one the other, but not both?
 ROTATION=
+
+# hardware specific defaults
+if [ "$(cat /sys/devices/virtual/dmi/id/product_name)" == "ONE XPLAYER" ]; then
+    ROTATION=left
+    GOODMODES=("1280x800")
+fi
 
 CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
 CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
@@ -87,10 +118,6 @@ fi
 
 if [ -z "$ROTATION" ] && [ "$TRANSPOSED" = true ]; then
 	ROTATION=right
-
-	if [ "$(cat /sys/devices/virtual/dmi/id/product_name)" == "ONE XPLAYER" ]; then
-		ROTATION=left
-	fi
 fi
 
 if [ -z "$ROTATION" ]; then
