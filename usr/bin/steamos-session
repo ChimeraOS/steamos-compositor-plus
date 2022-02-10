@@ -34,6 +34,12 @@ CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
 STEAMCMD="steam -tenfoot -steamos -fulldesktopres -nointro"
 COMPOSITORCMD="steamcompmgr"
 
+if command -v xdg-settings > /dev/null; then
+	if [ ! -f ${CONFIG_PATH}/mimeapps.list ]; then
+		xdg-settings set default-web-browser steam-browser.desktop
+	fi
+fi
+
 # Source environment from ~/.config/environment.d
 for i in ~/.config/environment.d/*.conf ;
 do
