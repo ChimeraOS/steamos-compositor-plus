@@ -17,7 +17,7 @@ while [ $SECONDS -lt $MAXSEC ]; do
   if [ -f "$PIDFILE" ]; then 
     OTHERPID=`cat $PIDFILE`
     kill $OTHERPID
-    systemctl shutdown
+    systemctl poweroff
     exit 0
   fi
 done
