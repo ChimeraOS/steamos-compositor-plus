@@ -6,3 +6,6 @@ XF86MonBrightness{Up,Down}
 
 super + p
 	/usr/share/steamos-compositor-plus/bin/screen_toggle.sh
+
+XF86PowerOff
+	/usr/share/steamos-compositor-plus/bin/power_off.sh
