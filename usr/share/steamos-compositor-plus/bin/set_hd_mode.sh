@@ -84,7 +84,7 @@ ALL_OUTPUT_NAMES=$(xrandr | grep ' connected' | cut -f1 -d' ')
 OUTPUT_NAME=$(echo $ALL_OUTPUT_NAMES | cut -f1 -d' ')
 
 # If any is connected, give priority to HDMI then DP
-OUTPUT_PRIORITY="HDMI DisplayPort DP"
+OUTPUT_PRIORITY="HDMI DisplayPort DP LVDS"
 PREFERRED_OUTPUT=$(first_by_prefix_order ALL_OUTPUT_NAMES[@] OUTPUT_PRIORITY[@])
 if [[ -n "$PREFERRED_OUTPUT" ]] ; then
     OUTPUT_NAME=$PREFERRED_OUTPUT
@@ -126,9 +126,12 @@ fi
 
 # detect and rotate touch screen
 TOUCHSCREEN=$(udevadm info --export-db | sed 's/^$/;;/' | tr '\n' '%%' | tr ';;' '\n' | grep ID_INPUT_TOUCHSCREEN=1 | tr '%%' '\n' | grep "E: NAME=" | head -1 | cut -d\" -f 2)
-if [ -n "$TOUCHSCREEN" ]; then
+TOUCHSCREEN_DISPLAYS=["eDP LVDS"]
+TOUCHSCREEN_OUTPUT=$(first_by_prefix_order OUTPUT_NAME TOUCHSCREEN_DISPLAYS[@])
+echo "Touchscreen: $TOUCHSCREEN, Display: $TOUCHSCREEN_OUTPUT"
+if [ -n "$TOUCHSCREEN" ] && [ -n "$TOUCHSCREEN_OUTPUT" ]; then
 	MATRIX="1 0 0 0 1 0 0 0 1"
-
+	echo "Calibrating touchscreen"
 	if [ "$ROTATION" = "right" ]; then
 		MATRIX="0 1 0 -1 0 1 0 0 1"
 	elif [ "$ROTATION" = "left" ]; then
@@ -140,6 +143,14 @@ if [ -n "$TOUCHSCREEN" ]; then
 	fi
 
 	xinput set-prop "pointer:$TOUCHSCREEN" --type=float "Coordinate Transformation Matrix" $MATRIX
+
+# disable touch screen if using external display
+elif [ -n "$TOUCHSCREEN" ] && [ -z "$TOUCHSCREEN_OUTPUT" ]; then
+	echo "Disabling touchscreen"
+	TOUCH_IDS=$(xinput --list | egrep -o "$TOUCHSCREEN.+id=[0-9]+" | egrep -o "[0-9]+")
+	for ID in $TOUCH_IDS; do
+		xinput disable $ID
+	done
 fi
 
 # Otherwise try to set combinations of good modes/rates until it works
