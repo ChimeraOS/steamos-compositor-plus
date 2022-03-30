@@ -84,7 +84,7 @@ ALL_OUTPUT_NAMES=$(xrandr | grep ' connected' | cut -f1 -d' ')
 OUTPUT_NAME=$(echo $ALL_OUTPUT_NAMES | cut -f1 -d' ')
 
 # If any is connected, give priority to HDMI then DP
-OUTPUT_PRIORITY="HDMI DP"
+OUTPUT_PRIORITY="HDMI DisplayPort DP"
 PREFERRED_OUTPUT=$(first_by_prefix_order ALL_OUTPUT_NAMES[@] OUTPUT_PRIORITY[@])
 if [[ -n "$PREFERRED_OUTPUT" ]] ; then
     OUTPUT_NAME=$PREFERRED_OUTPUT
