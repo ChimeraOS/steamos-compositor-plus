@@ -66,7 +66,6 @@ CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
 CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
 
 # Override the defaults from the user config
-echo "Debug: USER: $USER"
 if [ -f "$CONFIG_FILE" ]; then
     source "$CONFIG_FILE"
 else
@@ -81,10 +80,10 @@ xrandr --verbose
 
 # List connected outputs
 ALL_OUTPUT_NAMES=$(xrandr | grep ' connected' | cut -f1 -d' ')
+
 # Default to first connected output
 OUTPUT_NAME=$(echo $ALL_OUTPUT_NAMES | cut -f1 -d' ')
-echo "Debug: ALL_OUTPUT_NAMES: $ALL_OUTPUT_NAMES"
-echo "Debug: OUTPUT_NAME: $OUTPUT_NAME"
+
 # If any is connected, give priority to HDMI then DP
 OUTPUT_PRIORITY="HDMI DisplayPort DP LVDS"
 PREFERRED_OUTPUT=$(first_by_prefix_order ALL_OUTPUT_NAMES[@] OUTPUT_PRIORITY[@])
@@ -100,10 +99,7 @@ for i in $ALL_OUTPUT_NAMES; do
 	fi
 done
 
-
 CURRENT_MODELINE=`xrandr | grep \* | tr -s ' ' | head -n1`
-printf "Debug: CURRENT_MODELINE: $CURRENT_MODELINE \nxrandr | grep \* | tr -s ' ' | head -n1"
-
 CURRENT_MODE=`echo "$CURRENT_MODELINE" | cut -d' ' -f2`
 CURRENT_RATE=`echo "$CURRENT_MODELINE" | tr ' ' '\n' | grep \* | tr -d \* | tr -d +`
 
@@ -116,7 +112,7 @@ fi
 
 w=`echo $CURRENT_MODE | cut -dx -f1`
 h=`echo $CURRENT_MODE | cut -dx -f2`
-echo "Debug: CURRENT_MODE: $CURRENT_MODE, WxH: $w $h"
+
 if [ "$h" -gt "$w" ]; then
 	TRANSPOSED=true
 fi
