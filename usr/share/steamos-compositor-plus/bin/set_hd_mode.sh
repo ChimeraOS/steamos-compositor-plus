@@ -59,7 +59,7 @@ ROTATION=
 # hardware specific defaults
 if [ "$(cat /sys/devices/virtual/dmi/id/product_name)" == "ONE XPLAYER" ]; then
     ROTATION=left
-    GOODMODES=("1280x800")
+    GOODMODES=("1280x800" "2560x1600")
 fi
 
 CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
