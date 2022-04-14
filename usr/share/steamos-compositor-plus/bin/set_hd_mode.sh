@@ -56,7 +56,7 @@ GOODMODES=("3840x2160" "2560x1600" "2560x1440" "1920x1200" "1920x1080" "1280x800
 GOODRATES=("60.0" "59.9") # CEA modes guarantee or one the other, but not both?
 ROTATION=
 
-# hardware specific defaults
+# Hardware specific defaults
 if [ "$(cat /sys/devices/virtual/dmi/id/product_name)" == "ONE XPLAYER" ]; then
     ROTATION=left
     GOODMODES=("1280x800" "2560x1600")
@@ -80,15 +80,19 @@ xrandr --verbose
 
 # List connected outputs
 ALL_OUTPUT_NAMES=$(xrandr | grep ' connected' | cut -f1 -d' ')
+
 # Default to first connected output
 OUTPUT_NAME=$(echo $ALL_OUTPUT_NAMES | cut -f1 -d' ')
 
-# If any is connected, give priority to HDMI then DP
-OUTPUT_PRIORITY="HDMI DP"
+# If any is connected, give priority to HDMI and external DisplayPort
+OUTPUT_PRIORITY="HDMI DisplayPort DP LVDS"
 PREFERRED_OUTPUT=$(first_by_prefix_order ALL_OUTPUT_NAMES[@] OUTPUT_PRIORITY[@])
 if [[ -n "$PREFERRED_OUTPUT" ]] ; then
     OUTPUT_NAME=$PREFERRED_OUTPUT
 fi
+
+# Set an initial value to test against. Required for previously disabled devices.
+xrandr --output $OUTPUT_NAME --auto
 
 # Disable everything but the selected output
 for i in $ALL_OUTPUT_NAMES; do
@@ -97,9 +101,8 @@ for i in $ALL_OUTPUT_NAMES; do
 	fi
 done
 
-
+# Parse current mode.
 CURRENT_MODELINE=`xrandr | grep \* | tr -s ' ' | head -n1`
-
 CURRENT_MODE=`echo "$CURRENT_MODELINE" | cut -d' ' -f2`
 CURRENT_RATE=`echo "$CURRENT_MODELINE" | tr ' ' '\n' | grep \* | tr -d \* | tr -d +`
 
@@ -112,6 +115,7 @@ fi
 
 w=`echo $CURRENT_MODE | cut -dx -f1`
 h=`echo $CURRENT_MODE | cut -dx -f2`
+
 if [ "$h" -gt "$w" ]; then
 	TRANSPOSED=true
 fi
@@ -124,11 +128,15 @@ if [ -z "$ROTATION" ]; then
 	ROTATION=normal
 fi
 
-# detect and rotate touch screen
+# Detect, enable, and rotate touch screen
 TOUCHSCREEN=$(udevadm info --export-db | sed 's/^$/;;/' | tr '\n' '%%' | tr ';;' '\n' | grep ID_INPUT_TOUCHSCREEN=1 | tr '%%' '\n' | grep "E: NAME=" | head -1 | cut -d\" -f 2)
-if [ -n "$TOUCHSCREEN" ]; then
+TOUCHSCREEN_DISPLAYS=("eDP" "LVDS")
+TOUCH_IDS=$(xinput --list | egrep -o "$TOUCHSCREEN.+id=[0-9]+" | egrep -o "[0-9]+")
+if [ -n "$TOUCHSCREEN" ] && [[ "${TOUCHSCREEN_DISPLAYS[*]}" =~ $OUTPUT_NAME ]]; then
+	for ID in $TOUCH_IDS; do
+		xinput enable $ID
+	done
 	MATRIX="1 0 0 0 1 0 0 0 1"
-
 	if [ "$ROTATION" = "right" ]; then
 		MATRIX="0 1 0 -1 0 1 0 0 1"
 	elif [ "$ROTATION" = "left" ]; then
@@ -140,6 +148,12 @@ if [ -n "$TOUCHSCREEN" ]; then
 	fi
 
 	xinput set-prop "pointer:$TOUCHSCREEN" --type=float "Coordinate Transformation Matrix" $MATRIX
+
+# Disable touch screen if using external display
+elif [ -n "$TOUCHSCREEN" ] && [[ ! "${TOUCHSCREEN_DISPLAYS[*]}" =~ $OUTPUT_NAME ]]; then
+	for ID in $TOUCH_IDS; do
+		xinput disable $ID
+	done
 fi
 
 # Otherwise try to set combinations of good modes/rates until it works
