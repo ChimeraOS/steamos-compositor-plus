@@ -23,9 +23,12 @@ if [ "$(cat /sys/devices/virtual/dmi/id/product_name)" == "ONE XPLAYER" ]; then
 
     xrandr --newmode "600x960"   47.25  600 640 696 792  960 963 973 996 -hsync +vsync
     xrandr --addmode eDP1 600x960
-
+    
+    #Some ONE XPLAYER devices have different display names....adding these should get more ONE XPlayer devices booting on ChimeraOS. We should come back with a better solution later.
     xrandr --newmode "800x1280"  85.25  800 856 936 1072 1280 1283 1293 1327 -hsync +vsync
     xrandr --addmode eDP1 800x1280
+    xrandr --addmode eDP-1 800x1280
+    xrandr --addmode eDP 800x1280
 
     xrandr --newmode "900x1440"   109.50  904 968 1064 1224  1440 1443 1453 1493 -hsync +vsync
     xrandr --addmode eDP1 900x1440
