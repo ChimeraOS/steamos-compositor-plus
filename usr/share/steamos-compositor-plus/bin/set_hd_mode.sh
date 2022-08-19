@@ -77,8 +77,8 @@ fi
 # Aya Neo Air Devices
 if [[ ":$AIR_LIST:" =~ ":$SYS_ID:"  ]]; then
     ROTATION=left
-    GOODMODES=("1920x1080" "1280x720" "1152x720" "1024x768" "960x600" "800x600" "640x480")
-    GOODRATES=("60.0" "59.04" "59.0" "58.99" "58.96")
+    GOODMODES=("1920x1080")
+    GOODRATES=("60.0")
 fi
 
 CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
