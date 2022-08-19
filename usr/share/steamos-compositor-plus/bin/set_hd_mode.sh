@@ -16,8 +16,15 @@ function contains() {
 }
 
 # Devices with incorrect EDID readings need to have modes added before the compositor loads for it to work correctly
+SYS_ID="$(cat /sys/devices/virtual/dmi/id/product_name)"
 
-if [ "$(cat /sys/devices/virtual/dmi/id/product_name)" == "ONE XPLAYER" ]; then
+# Devices by DMI that require special quirks
+# OXP Devices
+OXP_LIST="ONE XPLAYER:ONEXPLAYER 1 T08:ONEXPLAYER 1S A08:ONEXPLAYER 1S T08:ONEXPLAYER mini A07:ONEXPLAYER mini GA72:ONEXPLAYER mini GT72:ONEXPLAYER GUNDAM GA72:ONEXPLAYER 2 ARP23"
+# AYANEO AIR Devices
+AIR_LIST="AIR:AIR Pro"
+
+if [[ ":$OXP_LIST:" =~ ":$SYS_ID:"  ]]; then
     xrandr --newmode "400x640"   20.25  400 424 456 512  640 643 653 665 -hsync +vsync
     xrandr --addmode eDP1 400x640
 
@@ -55,14 +62,23 @@ function first_by_prefix_order() {
     done
 }
 
+# Default display modes
 GOODMODES=("3840x2160" "2560x1600" "2560x1440" "1920x1200" "1920x1080" "1280x800" "1280x720")
 GOODRATES=("60.0" "59.9") # CEA modes guarantee or one the other, but not both?
 ROTATION=
 
-# Hardware specific defaults
-if [ "$(cat /sys/devices/virtual/dmi/id/product_name)" == "ONE XPLAYER" ]; then
+# Hardware specific display modes
+# OXP Devices
+if [[ ":$OXP_LIST:" =~ ":$SYS_ID:"  ]]; then
     ROTATION=left
     GOODMODES=("1280x800" "2560x1600")
+fi
+
+# Aya Neo Air Devices
+if [[ ":$AIR_LIST:" =~ ":$SYS_ID:"  ]]; then
+    ROTATION=left
+    GOODMODES=("1920x1080" "1280x720" "1152x720" "1024x768" "960x600" "800x600" "640x480")
+    GOODRATES=("60.0" "59.04" "59.0" "58.99" "58.96")
 fi
 
 CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
