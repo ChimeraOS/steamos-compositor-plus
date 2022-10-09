@@ -4,3 +4,4 @@ Exec=steam steam://openurl/%u
 Terminal=false
 Type=Application
 MimeType=x-scheme-handler/unknown;x-scheme-handler/about;x-scheme-handler/https;x-scheme-handler/http;text/html;
+NoDisplay=true
