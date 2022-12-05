@@ -23,6 +23,8 @@ SYS_ID="$(cat /sys/devices/virtual/dmi/id/product_name)"
 OXP_LIST="ONE XPLAYER:ONEXPLAYER 1 T08:ONEXPLAYER 1S A08:ONEXPLAYER 1S T08:ONEXPLAYER mini A07:ONEXPLAYER mini GA72:ONEXPLAYER mini GT72:ONEXPLAYER GUNDAM GA72:ONEXPLAYER 2 ARP23"
 # AYANEO AIR Devices
 AIR_LIST="AIR:AIR Pro"
+# AOKZOE Devices
+AOK_LIST="AOKZOE A1 AR07"
 
 if [[ ":$OXP_LIST:" =~ ":$SYS_ID:"  ]]; then
     xrandr --newmode "400x640"   20.25  400 424 456 512  640 643 653 665 -hsync +vsync
@@ -48,6 +50,11 @@ if [[ ":$OXP_LIST:" =~ ":$SYS_ID:"  ]]; then
 
     xrandr --newmode "1600x2560"   353.50  1600 1736 1912 2224  2560 2563 2573 2651 -hsync +vsync
     xrandr --addmode eDP1 1600x2560
+fi
+
+if [[ ":$AOK_LIST:" =~ ":$SYS_ID:"  ]]; then
+    xrandr --newmode "1200x1920"   196.50  1200 1296 1424 1648  1920 1923 1933 1989 -hsync +vsync
+    xrandr --addmode eDP1 1200x1920
 fi
 
 # This function echoes the first element from first argument array, matching a
@@ -78,6 +85,13 @@ fi
 if [[ ":$AIR_LIST:" =~ ":$SYS_ID:"  ]]; then
     ROTATION=left
     GOODMODES=("1920x1080")
+    GOODRATES=("60.0")
+fi
+
+# AOKZOE Devices
+if [[ ":$AOK_LIST:" =~ ":$SYS_ID:"  ]]; then
+    ROTATION=left
+    GOODMODES=("1920x1200")
     GOODRATES=("60.0")
 fi
 
