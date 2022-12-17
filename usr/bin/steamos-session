@@ -31,7 +31,7 @@ fi
 CONFIG_PATH=${XDG_CONFIG_HOME:-$HOME/.config}
 CONFIG_FILE="$CONFIG_PATH/steamos-compositor-plus"
 
-STEAMCMD="steam -tenfoot -steamos -fulldesktopres -nointro -steampal -steamdeck"
+STEAMCMD="steam -oldbigpicture -tenfoot -steamos -fulldesktopres -nointro"
 COMPOSITORCMD="steamcompmgr"
 
 if command -v xdg-settings > /dev/null; then
